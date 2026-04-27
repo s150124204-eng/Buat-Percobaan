@@ -12,11 +12,11 @@
       --muted: #6b7280;
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --success: #16a34a;
-      --danger: #dc2626;
       --border: #dbe3f0;
       --shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
       --radius: 22px;
+      --ok: #16a34a;
+      --no: #dc2626;
     }
 
     * { box-sizing: border-box; }
@@ -29,26 +29,20 @@
     }
 
     .wrap {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1120px, calc(100% - 24px));
       margin: 0 auto;
-      padding: 24px 0 36px;
+      padding: 20px 0 32px;
     }
 
-    .hero {
+    .hero, .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 28px;
       box-shadow: var(--shadow);
-      padding: 28px;
-      margin-bottom: 20px;
     }
 
-    .hero-top {
-      display: grid;
-      grid-template-columns: 1.3fr 0.7fr;
-      gap: 20px;
-      align-items: start;
-    }
+    .hero { padding: 24px; margin-bottom: 18px; }
+    .hero-top { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 18px; align-items: start; }
 
     h1 {
       margin: 0 0 10px;
@@ -65,7 +59,7 @@
     }
 
     .rules {
-      margin-top: 18px;
+      margin-top: 16px;
       display: grid;
       gap: 10px;
       color: #334155;
@@ -79,40 +73,25 @@
       background: rgba(37, 99, 235, 0.06);
       border: 1px solid rgba(37, 99, 235, 0.16);
       border-radius: 20px;
-      padding: 18px;
+      padding: 16px;
     }
 
-    .panel h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    .panel p {
-      margin: 0;
-      color: #334155;
-      line-height: 1.5;
-      font-size: 14px;
-    }
+    .panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .panel p { margin: 0; color: #334155; line-height: 1.5; font-size: 14px; }
 
     .game {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
-      gap: 20px;
+      gap: 18px;
     }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
+    .card { padding: 20px; }
 
     .status-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .stat {
@@ -131,11 +110,7 @@
       letter-spacing: 0.08em;
     }
 
-    .stat .value {
-      font-size: 20px;
-      font-weight: 800;
-      color: #0f172a;
-    }
+    .stat .value { font-size: 20px; font-weight: 800; color: #0f172a; }
 
     .play-area {
       display: grid;
@@ -143,23 +118,12 @@
       align-items: center;
       justify-items: center;
       min-height: 420px;
-      padding: 14px 0 8px;
+      padding: 10px 0 6px;
     }
 
-    .prompt {
-      text-align: center;
-    }
-
-    .prompt h3 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      letter-spacing: -0.02em;
-    }
-
-    .prompt p {
-      margin: 0;
-      color: var(--muted);
-    }
+    .prompt { text-align: center; }
+    .prompt h3 { margin: 0 0 8px; font-size: 28px; letter-spacing: -0.02em; }
+    .prompt p { margin: 0; color: var(--muted); }
 
     .sequence {
       display: flex;
@@ -180,7 +144,6 @@
       place-items: center;
       box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
       position: relative;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
       user-select: none;
     }
 
@@ -190,11 +153,7 @@
       box-shadow: 0 12px 28px rgba(37, 99, 235, 0.14);
     }
 
-    .duck span {
-      font-size: 34px;
-      line-height: 1;
-    }
-
+    .duck span { font-size: 34px; line-height: 1; }
     .duck .tag {
       position: absolute;
       bottom: 8px;
@@ -234,9 +193,7 @@
       border-color: #bdd0f1;
     }
 
-    .btn:active,
     .btn.active {
-      transform: translateY(0);
       border-color: rgba(37, 99, 235, 0.8);
       background: rgba(37, 99, 235, 0.08);
     }
@@ -264,25 +221,9 @@
       cursor: pointer;
     }
 
-    .primary {
-      background: var(--primary);
-      color: #fff;
-    }
-
+    .primary { background: var(--primary); color: #fff; }
     .primary:hover { background: var(--primary-dark); }
-
-    .ghost {
-      background: #edf2ff;
-      color: #1e3a8a;
-    }
-
-    .history {
-      display: grid;
-      gap: 12px;
-      max-height: 640px;
-      overflow: auto;
-      padding-right: 6px;
-    }
+    .ghost { background: #edf2ff; color: #1e3a8a; }
 
     .history-head {
       display: flex;
@@ -292,14 +233,26 @@
       margin-bottom: 10px;
     }
 
-    .history-head h2 {
-      margin: 0;
-      font-size: 22px;
-    }
+    .history-head h2 { margin: 0; font-size: 22px; }
+    .history-head span { color: var(--muted); font-size: 13px; }
 
-    .history-head span {
-      color: var(--muted);
-      font-size: 13px;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .badge.ok { background: #dcfce7; color: #166534; }
+    .badge.no { background: #fee2e2; color: #991b1b; }
+
+    .history {
+      display: grid;
+      gap: 12px;
+      max-height: 640px;
+      overflow: auto;
+      padding-right: 6px;
     }
 
     .row {
@@ -316,19 +269,6 @@
       align-items: center;
       margin-bottom: 8px;
     }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-    }
-
-    .badge.ok { background: #dcfce7; color: #166534; }
-    .badge.no { background: #fee2e2; color: #991b1b; }
 
     .row-grid {
       display: grid;
@@ -355,8 +295,8 @@
     }
 
     @media (max-width: 560px) {
-      .wrap { width: min(100% - 20px, 100%); }
-      .hero, .card { padding: 18px; border-radius: 20px; }
+      .wrap { width: min(100% - 16px, 100%); }
+      .hero, .card { padding: 16px; border-radius: 20px; }
       .status-grid { grid-template-columns: 1fr 1fr; }
       .controls { grid-template-columns: 1fr 1fr; }
       .duck { width: 76px; height: 76px; }
@@ -372,22 +312,20 @@
         <div>
           <h1>Match by Direction</h1>
           <p class="lead">
-            Pilih arah yang sesuai dengan urutan bebek. Level 1 berisi 4 soal, level 2 berisi 6 soal, dan level 3 berisi 10 soal. Timer dihapus, tetapi jawaban pemain tetap dicatat lengkap ke Sheets.
+            Game ini memakai 3 level dengan total 20 soal, sesuai urutan arah yang kamu minta.
+            Timer sudah dihapus. Jawaban cukup dimasukkan berurutan sampai lengkap.
           </p>
           <div class="rules">
-            <div><strong>1.</strong> Gunakan tombol keyboard Arrow Up, Arrow Down, Arrow Right, dan Arrow Left.</div>
-            <div><strong>2.</strong> Masukkan jawaban sesuai urutan arah yang tampil.</div>
-            <div><strong>3.</strong> Setiap soal menyimpan klik pemain dan kunci jawaban.</div>
-            <div><strong>4.</strong> Setelah satu soal lengkap, permainan lanjut otomatis ke soal berikutnya.</div>
+            <div><strong>1.</strong> Gunakan tombol arah di layar atau keyboard panah.</div>
+            <div><strong>2.</strong> Level 1: 4 soal, 1 bebek.</div>
+            <div><strong>3.</strong> Level 2: 6 soal, 2 bebek.</div>
+            <div><strong>4.</strong> Level 3: 10 soal, 3 bebek.</div>
           </div>
         </div>
         <div class="panel">
-          <h2>Google Sheets</h2>
+          <h2>Catatan</h2>
           <p>
-            Data yang dikirim per soal: level, nomor soal, stimulus, klik pemain, jawaban benar, status benar/salah, dan waktu respons.
-          </p>
-          <p style="margin-top:10px;">
-            Ganti <strong>SHEETS_WEB_APP_URL</strong> dengan URL Apps Script kamu.
+            Kode ini sudah bisa langsung jalan sebagai file HTML tunggal. Bagian Sheets sengaja belum dipasang dulu.
           </p>
         </div>
       </div>
@@ -405,7 +343,7 @@
         <div class="play-area">
           <div class="prompt">
             <h3 id="promptTitle">Tekan PLAY untuk mulai</h3>
-            <p id="promptSubtitle">Urutan arah bebek akan muncul di area bawah.</p>
+            <p id="promptSubtitle">Urutan arah bebek akan muncul di bawah.</p>
           </div>
 
           <div class="sequence" id="sequence"></div>
@@ -444,16 +382,6 @@
   </main>
 
   <script>
-    // ============================
-    // KONFIGURASI SHEETS
-    // ============================
-    // Ganti dengan URL Web App Google Apps Script kamu.
-    // Contoh: https://script.google.com/macros/s/AKfycbxxxx/exec
-    const SHEETS_WEB_APP_URL = "PASTE_URL_APPS_SCRIPT_DI_SINI";
-
-    // ============================
-    // DATA LEVEL
-    // ============================
     const LEVELS = [
       {
         level: 1,
@@ -492,23 +420,9 @@
       }
     ];
 
-    const DIR_LABEL = {
-      kiri: "Kiri",
-      kanan: "Kanan",
-      atas: "Atas",
-      bawah: "Bawah"
-    };
+    const DIR_LABEL = { kiri: "Kiri", kanan: "Kanan", atas: "Atas", bawah: "Bawah" };
+    const DUCK_ICON = "🦆";
 
-    const DIR_EMOJI = {
-      kiri: "🦆",
-      kanan: "🦆",
-      atas: "🦆",
-      bawah: "🦆"
-    };
-
-    // ============================
-    // STATE
-    // ============================
     let currentLevelIndex = 0;
     let currentQuestionIndex = 0;
     let activeQuestion = null;
@@ -520,13 +434,8 @@
     let totalCorrect = 0;
     let totalWrong = 0;
     let totalAnswered = 0;
-    let answerHistory = [];
     let levelStats = [0, 0, 0];
-    let trialId = createTrialId();
 
-    // ============================
-    // ELEMENTS
-    // ============================
     const levelText = document.getElementById("levelText");
     const questionText = document.getElementById("questionText");
     const clickText = document.getElementById("clickText");
@@ -542,26 +451,6 @@
     const restartBtn = document.getElementById("restartBtn");
     const controlButtons = [...document.querySelectorAll(".btn[data-dir]")];
 
-    // ============================
-    // UTILITIES
-    // ============================
-    function createTrialId() {
-      const d = new Date();
-      const pad = (n) => String(n).padStart(2, "0");
-      return [
-        d.getFullYear(),
-        pad(d.getMonth() + 1),
-        pad(d.getDate()),
-        pad(d.getHours()),
-        pad(d.getMinutes()),
-        pad(d.getSeconds())
-      ].join("");
-    }
-
-    function nowIso() {
-      return new Date().toISOString();
-    }
-
     function totalQuestionCount() {
       return LEVELS.reduce((acc, level) => acc + level.questions.length, 0);
     }
@@ -572,13 +461,19 @@
     }
 
     function setActiveButton(dir) {
-      controlButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.dir === dir);
-      });
+      controlButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.dir === dir));
     }
 
     function getCurrentLevel() {
       return LEVELS[currentLevelIndex];
+    }
+
+    function updateUI() {
+      const level = getCurrentLevel();
+      levelText.textContent = String(level.level);
+      questionText.textContent = `${currentQuestionIndex + (gameStarted ? 1 : 0)} / ${level.questions.length}`;
+      clickText.textContent = `${totalAnswered} / ${totalQuestionCount()}`;
+      scoreText.textContent = String(totalCorrect);
     }
 
     function renderDucks(question) {
@@ -586,7 +481,7 @@
       question.forEach((dir, index) => {
         const duck = document.createElement("div");
         duck.className = "duck";
-        duck.innerHTML = `<span>${DIR_EMOJI[dir]}</span><div class="tag">${index + 1}. ${DIR_LABEL[dir]}</div>`;
+        duck.innerHTML = `<span>${DUCK_ICON}</span><div class="tag">${index + 1}. ${DIR_LABEL[dir]}</div>`;
         if (index === 0) duck.classList.add("active");
         sequenceEl.appendChild(duck);
       });
@@ -608,14 +503,6 @@
         </div>
       `;
       historyEl.prepend(row);
-    }
-
-    function updateUI() {
-      const level = getCurrentLevel();
-      levelText.textContent = String(level.level);
-      questionText.textContent = `${currentQuestionIndex + (gameStarted ? 1 : 0)} / ${level.questions.length}`;
-      clickText.textContent = `${totalAnswered} / ${totalQuestionCount()}`;
-      scoreText.textContent = String(totalCorrect);
     }
 
     function showQuestion() {
@@ -647,8 +534,6 @@
       totalWrong = 0;
       totalAnswered = 0;
       levelStats = [0, 0, 0];
-      answerHistory = [];
-      trialId = createTrialId();
       historyEl.innerHTML = "";
       summaryBox.textContent = "Hasil akhir permainan akan tampil di sini.";
       promptTitle.textContent = "Siap mulai";
@@ -681,63 +566,6 @@
         Total soal: ${totalQuestions}<br>
         Akurasi: ${accuracy}%
       `;
-
-      sendFinalSummaryToSheets({ accuracy, totalQuestions });
-    }
-
-    async function sendToSheets(payload) {
-      if (!SHEETS_WEB_APP_URL || SHEETS_WEB_APP_URL.includes("PASTE_URL_APPS_SCRIPT_DI_SINI")) {
-        return;
-      }
-
-      const body = new URLSearchParams(payload).toString();
-      try {
-        await fetch(SHEETS_WEB_APP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-          },
-          body
-        });
-      } catch (error) {
-        console.warn("Gagal kirim ke Sheets:", error);
-      }
-    }
-
-    function sendAnswerToSheets(item) {
-      return sendToSheets({
-        type: "answer",
-        timestamp: item.timestamp,
-        trialId,
-        trialNumber: String(trialNumber),
-        level: String(item.level),
-        questionNumber: String(item.questionNumber),
-        stimulus: item.stimulus,
-        clickedAnswer: item.clickedAnswer,
-        correctAnswer: item.correctAnswer,
-        isCorrect: String(item.isCorrect),
-        reactionTimeMs: String(item.reactionTimeMs),
-        totalCorrect: String(totalCorrect),
-        totalWrong: String(totalWrong)
-      });
-    }
-
-    function sendFinalSummaryToSheets(extra = {}) {
-      return sendToSheets({
-        type: "summary",
-        timestamp: nowIso(),
-        trialId,
-        trialNumber: String(trialNumber),
-        totalCorrect: String(totalCorrect),
-        totalWrong: String(totalWrong),
-        totalAnswered: String(totalAnswered),
-        accuracy: String(extra.accuracy ?? 0),
-        totalQuestions: String(extra.totalQuestions ?? 0),
-        level1Correct: String(levelStats[0]),
-        level2Correct: String(levelStats[1]),
-        level3Correct: String(levelStats[2])
-      });
     }
 
     function concludeAnswer() {
@@ -759,7 +587,6 @@
       }
 
       const item = {
-        timestamp: nowIso(),
         level: currentLevelIndex + 1,
         questionNumber: currentQuestionIndex + 1,
         stimulus,
@@ -769,10 +596,8 @@
         reactionTimeMs
       };
 
-      answerHistory.push(item);
       renderHistoryItem(item);
       updateUI();
-      sendAnswerToSheets(item);
 
       const isLastQuestionInLevel = currentQuestionIndex >= getCurrentLevel().questions.length - 1;
       const isLastLevel = currentLevelIndex >= LEVELS.length - 1;
@@ -815,14 +640,14 @@
     function restartGame() {
       trialNumber += 1;
       nextBtn.textContent = "LANJUT";
+      startBtn.classList.remove("hidden");
       startGame();
     }
 
     function recordInput(dir) {
       if (!gameStarted || !awaitingAnswer || !activeQuestion) return;
 
-      const expectedIndex = inputBuffer.length;
-      if (expectedIndex >= activeQuestion.length) return;
+      if (inputBuffer.length >= activeQuestion.length) return;
 
       inputBuffer.push(dir);
       setActiveButton(dir);
@@ -835,17 +660,12 @@
       }
     }
 
-    // ============================
-    // EVENTS
-    // ============================
     startBtn.addEventListener("click", startGame);
     nextBtn.addEventListener("click", goNext);
     restartBtn.addEventListener("click", restartGame);
 
     controlButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        recordInput(btn.dataset.dir);
-      });
+      btn.addEventListener("click", () => recordInput(btn.dataset.dir));
     });
 
     window.addEventListener("keydown", (event) => {
@@ -864,9 +684,6 @@
       recordInput(dir);
     });
 
-    // ============================
-    // INITIAL VIEW
-    // ============================
     updateUI();
     sequenceEl.innerHTML = "";
     setBadge("Siap", "ok");
