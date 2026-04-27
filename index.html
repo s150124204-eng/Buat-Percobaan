@@ -1509,6 +1509,20 @@
       down: "Bawah",
     };
 
+    function normalizeDirection(dir) {
+      const map = {
+        kiri: "left",
+        atas: "up",
+        kanan: "right",
+        bawah: "down",
+        left: "left",
+        up: "up",
+        right: "right",
+        down: "down",
+      };
+      return map[dir] || dir;
+    }
+
     let level = 0;
     let questionIndex = 0;
     let levelStartMs = 0;
@@ -1553,7 +1567,7 @@
 
     function formatTargetSequence(targets) {
       if (!targets || !targets.length) return "-";
-      return targets.map(d => directionLabels[d]).join(" → ");
+      return targets.map(d => directionLabels[normalizeDirection(d)] || d).join(" → ");
     }
 
     function clamp(n, min, max) {
@@ -1706,7 +1720,7 @@
 
     function renderDuck(dir) {
       const duck = document.createElement("div");
-      duck.className = `duck dir-${dir}`;
+      duck.className = `duck dir-${normalizeDirection(dir)}`;
       duck.innerHTML = `<span class="tail"></span><span class="wing"></span><span class="eye"></span><span class="beak"></span>`;
       return duck;
     }
@@ -1855,7 +1869,7 @@
 
       updateButtonStates(direction);
 
-      const expected = currentTargets[currentClickIndex];
+      const expected = normalizeDirection(currentTargets[currentClickIndex]);
       const isCorrect = direction === expected;
       const responseMs = Date.now() - currentQuestionLog.startMs;
 
