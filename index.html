@@ -1660,10 +1660,7 @@
       params.append("level3ScoreTotal", String(l3.totalScore ?? 0));
       params.append("responseLog", JSON.stringify(buildResponseLogText()));
       params.append("leaderboardSnapshot", JSON.stringify(buildLeaderboardSnapshot()));
-
-      for (const [key, value] of Object.entries(questionMatrix)) {
-        params.append(key, value);
-      }
+      params.append("questionMatrix", JSON.stringify(questionMatrix));
 
       try {
         await fetch(SHEET_WEBAPP_URL, {
