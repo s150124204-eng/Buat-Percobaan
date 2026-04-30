@@ -1446,7 +1446,7 @@
   </div>
 
   <script>
-    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzokm3uwuqoQACnwjo9kASpOlUJfN-QQQqeOkYiQBQOmiKP7ZSC53AIhSLsecy6JaGkOQ/exec";
+    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxDpPTG2VPE_YtRaLWdEjpkGhT1a4qtCCjA2ajGBz2s-T25jGjDc9C9x3RVWCP6XjsHgw/exec";
 
     const levelConfig = [
       {
@@ -1604,51 +1604,66 @@
       return JSON.parse(localStorage.getItem("mbd_leaderboard_v6") || "[]");
     }
 
+    function buildQuestionAnswerMatrix() {
+      const matrix = {};
+
+      for (let lvl = 0; lvl < 3; lvl++) {
+        const logs = levelQuestionLogs[lvl] || [];
+        for (let q = 1; q <= 20; q++) {
+          const log = logs.find(item => item.questionNo === q);
+          const response = log && log.clicks && log.clicks.length
+            ? log.clicks.map(c => directionLabels[c.pressed] || c.pressed).join(" | ")
+            : "";
+          const key = log && log.targets && log.targets.length
+            ? log.targets.map(t => directionLabels[normalizeDirection(t)] || t).join(" | ")
+            : "";
+          const correct = log ? (log.correct ? "TRUE" : "FALSE") : "";
+
+          matrix[`L${lvl + 1} Q${q} Response`] = response;
+          matrix[`L${lvl + 1} Q${q} Key`] = key;
+          matrix[`L${lvl + 1} Q${q} Correct`] = correct;
+        }
+      }
+
+      return matrix;
+    }
+
     async function sendToSheet(summary, attemptNo) {
       const playerName = document.getElementById("playerName").value.trim();
       const playerEmail = document.getElementById("playerEmail").value.trim();
+      const questionMatrix = buildQuestionAnswerMatrix();
 
       const l1 = summary.levelDetails?.[0] || {};
       const l2 = summary.levelDetails?.[1] || {};
       const l3 = summary.levelDetails?.[2] || {};
 
-      const params = new URLSearchParams({
-        source: "MatchByDirection",
-        localTime: new Date().toLocaleString("id-ID"),
-        playerName,
-        playerEmail,
-        attemptNo: String(attemptNo ?? ""),
-        finalScore: String(summary.finalScore ?? 0),
-        accuracyScore: String(summary.accuracyScore ?? 0),
-        speedScore: String(summary.speedScore ?? 0),
-        totalCorrect: String(summary.totalCorrect ?? 0),
-        totalWrong: String(summary.totalWrong ?? 0),
-        totalSkipped: String(summary.totalSkipped ?? 0),
-        totalQuestions: String(summary.totalQuestions ?? 0),
-        totalAllowedTime: String(summary.totalAllowedTime ?? 0),
-        totalTimeUsed: String(summary.totalTimeUsed ?? 0),
-        avgResponseMs: String(Math.round(average(summary.levelDetails.map(x => x.avgResponseMs || 0)))),
-        level1_correct: String(l1.correct ?? 0),
-        level1_wrong: String(l1.wrong ?? 0),
-        level1_skipped: String(l1.skipped ?? 0),
-        level1_accuracy: String(l1.accuracyScore ?? 0),
-        level1_speed: String(l1.speedScore ?? 0),
-        level1_avgResponseMs: String(l1.avgResponseMs ?? 0),
-        level2_correct: String(l2.correct ?? 0),
-        level2_wrong: String(l2.wrong ?? 0),
-        level2_skipped: String(l2.skipped ?? 0),
-        level2_accuracy: String(l2.accuracyScore ?? 0),
-        level2_speed: String(l2.speedScore ?? 0),
-        level2_avgResponseMs: String(l2.avgResponseMs ?? 0),
-        level3_correct: String(l3.correct ?? 0),
-        level3_wrong: String(l3.wrong ?? 0),
-        level3_skipped: String(l3.skipped ?? 0),
-        level3_accuracy: String(l3.accuracyScore ?? 0),
-        level3_speed: String(l3.speedScore ?? 0),
-        level3_avgResponseMs: String(l3.avgResponseMs ?? 0),
-        responseLog: JSON.stringify(buildResponseLogText()),
-        leaderboardSnapshot: JSON.stringify(buildLeaderboardSnapshot())
-      });
+      const params = new URLSearchParams();
+      params.append("timestamp", new Date().toISOString());
+      params.append("email", playerEmail);
+      params.append("playerName", playerName);
+      params.append("attemptNo", String(attemptNo ?? ""));
+      params.append("pretestScore", String(window.pretestScore ?? ""));
+      params.append("posttestScore", String(window.posttestScore ?? ""));
+      params.append("finalScore", String(summary.finalScore ?? 0));
+      params.append("accuracyScore", String(summary.accuracyScore ?? 0));
+      params.append("totalWrong", String(summary.totalWrong ?? 0));
+      params.append("totalQuestions", String(summary.totalQuestions ?? 0));
+      params.append("avgResponse", String(Math.round(average(summary.levelDetails.map(x => x.avgResponseMs || 0)))));
+      params.append("level1Correct", String(l1.correct ?? 0));
+      params.append("level1Wrong", String(l1.wrong ?? 0));
+      params.append("level2Correct", String(l2.correct ?? 0));
+      params.append("level2Wrong", String(l2.wrong ?? 0));
+      params.append("level3Correct", String(l3.correct ?? 0));
+      params.append("level3Wrong", String(l3.wrong ?? 0));
+      params.append("level1ScoreTotal", String(l1.totalScore ?? 0));
+      params.append("level2ScoreTotal", String(l2.totalScore ?? 0));
+      params.append("level3ScoreTotal", String(l3.totalScore ?? 0));
+      params.append("responseLog", JSON.stringify(buildResponseLogText()));
+      params.append("leaderboardSnapshot", JSON.stringify(buildLeaderboardSnapshot()));
+
+      for (const [key, value] of Object.entries(questionMatrix)) {
+        params.append(key, value);
+      }
 
       try {
         await fetch(SHEET_WEBAPP_URL, {
