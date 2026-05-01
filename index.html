@@ -1446,7 +1446,7 @@
   </div>
 
   <script>
-    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzVhtKsTKCMJM20wREDDyV5b3iYv42M4OoNSjoTqWGvtdhzMIxMEDnATESiA2gznnMs9g/exec";
+    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyw0p4EcHagw453t8AxvJmi5NtcXTTuBV5pNQp2lmqRGrmcnlU5qi1eBTkbH5sAnK6lgg/exec";
 
     const levelConfig = [
       {
@@ -1600,24 +1600,28 @@
       }));
     }
 
-    function buildLeaderboardSnapshot() {
-      return JSON.parse(localStorage.getItem("mbd_leaderboard_v6") || "[]");
-    }
-
-    function buildQuestionAnswerMatrix() {
+    function buildQuestionMatrix() {
       const matrix = {};
+      const counts = [4, 6, 10];
 
       for (let lvl = 0; lvl < 3; lvl++) {
         const logs = levelQuestionLogs[lvl] || [];
-        for (let q = 1; q <= 20; q++) {
+        const maxQuestions = counts[lvl];
+
+        for (let q = 1; q <= maxQuestions; q++) {
           const log = logs.find(item => item.questionNo === q);
+
           const response = log && log.clicks && log.clicks.length
             ? log.clicks.map(c => directionLabels[c.pressed] || c.pressed).join(" | ")
             : "";
+
           const key = log && log.targets && log.targets.length
             ? log.targets.map(t => directionLabels[normalizeDirection(t)] || t).join(" | ")
             : "";
-          const correct = log ? (log.correct ? "TRUE" : "FALSE") : "";
+
+          const correct = log
+            ? (log.correct ? "TRUE" : "FALSE")
+            : "";
 
           matrix[`L${lvl + 1} Q${q} Response`] = response;
           matrix[`L${lvl + 1} Q${q} Key`] = key;
@@ -1628,46 +1632,63 @@
       return matrix;
     }
 
+    function buildLeaderboardSnapshot() {
+      return JSON.parse(localStorage.getItem("mbd_leaderboard_v6") || "[]");
+    }
+
     async function sendToSheet(summary, attemptNo) {
       const playerName = document.getElementById("playerName").value.trim();
       const playerEmail = document.getElementById("playerEmail").value.trim();
-      const questionMatrix = buildQuestionAnswerMatrix();
 
       const l1 = summary.levelDetails?.[0] || {};
       const l2 = summary.levelDetails?.[1] || {};
       const l3 = summary.levelDetails?.[2] || {};
 
-      const params = new URLSearchParams();
-      params.append("timestamp", new Date().toISOString());
-      params.append("email", playerEmail);
-      params.append("playerName", playerName);
-      params.append("attemptNo", String(attemptNo ?? ""));
-      params.append("pretestScore", String(window.pretestScore ?? ""));
-      params.append("posttestScore", String(window.posttestScore ?? ""));
-      params.append("finalScore", String(summary.finalScore ?? 0));
-      params.append("accuracyScore", String(summary.accuracyScore ?? 0));
-      params.append("totalWrong", String(summary.totalWrong ?? 0));
-      params.append("totalQuestions", String(summary.totalQuestions ?? 0));
-      params.append("avgResponse", String(Math.round(average(summary.levelDetails.map(x => x.avgResponseMs || 0)))));
-      params.append("level1Correct", String(l1.correct ?? 0));
-      params.append("level1Wrong", String(l1.wrong ?? 0));
-      params.append("level2Correct", String(l2.correct ?? 0));
-      params.append("level2Wrong", String(l2.wrong ?? 0));
-      params.append("level3Correct", String(l3.correct ?? 0));
-      params.append("level3Wrong", String(l3.wrong ?? 0));
-      params.append("level1ScoreTotal", String(l1.totalScore ?? 0));
-      params.append("level2ScoreTotal", String(l2.totalScore ?? 0));
-      params.append("level3ScoreTotal", String(l3.totalScore ?? 0));
-      params.append("responseLog", JSON.stringify(buildResponseLogText()));
-      params.append("leaderboardSnapshot", JSON.stringify(buildLeaderboardSnapshot()));
-      params.append("questionMatrix", JSON.stringify(questionMatrix));
+      const payload = {
+        timestamp: new Date().toISOString(),
+        localTime: new Date().toLocaleString("id-ID"),
+        source: "MatchByDirection",
+
+        email: playerEmail,
+        playerName: playerName,
+        attemptNo: String(attemptNo ?? ""),
+
+        pretestScore: window.pretestScore ?? "",
+        posttestScore: window.posttestScore ?? "",
+
+        finalScore: String(summary.finalScore ?? 0),
+        accuracyScore: String(summary.accuracyScore ?? 0),
+        totalWrong: String(summary.totalWrong ?? 0),
+        totalQuestions: String(summary.totalQuestions ?? 0),
+        avgResponse: String(Math.round(average(summary.levelDetails.map(x => x.avgResponseMs || 0)))),
+
+        level1Correct: String(l1.correct ?? 0),
+        level1Wrong: String(l1.wrong ?? 0),
+        level2Correct: String(l2.correct ?? 0),
+        level2Wrong: String(l2.wrong ?? 0),
+        level3Correct: String(l3.correct ?? 0),
+        level3Wrong: String(l3.wrong ?? 0),
+
+        level1ScoreTotal: String(l1.totalScore ?? 0),
+        level2ScoreTotal: String(l2.totalScore ?? 0),
+        level3ScoreTotal: String(l3.totalScore ?? 0),
+
+        questionMatrix: buildQuestionMatrix(),
+        responseLog: buildResponseLogText(),
+        leaderboardSnapshot: buildLeaderboardSnapshot()
+      };
 
       try {
         await fetch(SHEET_WEBAPP_URL, {
           method: "POST",
           mode: "no-cors",
-          body: params
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
         });
+
+        console.log("Data berhasil dikirim ke Google Sheets");
       } catch (err) {
         console.warn("Gagal kirim data ke Sheet:", err);
       }
