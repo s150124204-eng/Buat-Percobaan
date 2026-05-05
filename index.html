@@ -185,13 +185,7 @@
       margin-top: 4px;
     }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .form-input, .form-select {
+    .form-input {
       width: 100%;
       height: 54px;
       border: 1px solid rgba(255, 255, 255, .14);
@@ -204,15 +198,11 @@
       box-shadow: inset 0 2px 12px rgba(0, 0, 0, .08);
     }
 
-    .form-select {
+    select.form-input {
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, #16213a 50%), linear-gradient(135deg, #16213a 50%, transparent 50%);
-      background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-      padding-right: 34px;
+      padding-right: 40px;
     }
 
     .btn {
@@ -921,12 +911,7 @@
         gap: 10px;
       }
 
-      .form-row {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      .form-input, .form-select {
+      .form-input {
         height: 48px;
         font-size: .94rem;
       }
@@ -1327,14 +1312,24 @@
 
         <div class="form-stack">
           <input id="playerName" class="form-input" type="text" placeholder="Enter your name" />
-          <div class="form-row">
-            <select id="playerGender" class="form-select">
-              <option value="">Pilih jenis kelamin</option>
-              <option value="Laki-laki">Laki-laki</option>
-              <option value="Perempuan">Perempuan</option>
-            </select>
-            <input id="playerAge" class="form-input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Usia" />
-          </div>
+
+          <select id="playerGender" class="form-input" onchange="updatePlayState()">
+            <option value="">Pilih jenis kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+
+          <input
+            id="playerAge"
+            class="form-input"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            step="1"
+            placeholder="Masukkan usia"
+            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+          />
+
           <input id="playerEmail" class="form-input" type="email" placeholder="Enter your email" />
           <button id="playBtn" class="btn" onclick="startGame()" disabled>PLAY</button>
         </div>
@@ -1581,11 +1576,6 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    function sanitizeAgeInput() {
-      const ageInput = document.getElementById("playerAge");
-      ageInput.value = ageInput.value.replace(/\D/g, "");
-    }
-
     function updatePlayState() {
       const name = document.getElementById("playerName").value.trim();
       const gender = document.getElementById("playerGender").value.trim();
@@ -1596,10 +1586,7 @@
 
     document.getElementById("playerName").addEventListener("input", updatePlayState);
     document.getElementById("playerGender").addEventListener("change", updatePlayState);
-    document.getElementById("playerAge").addEventListener("input", () => {
-      sanitizeAgeInput();
-      updatePlayState();
-    });
+    document.getElementById("playerAge").addEventListener("input", updatePlayState);
     document.getElementById("playerEmail").addEventListener("input", updatePlayState);
 
     function formatMs(ms) {
@@ -1697,6 +1684,8 @@
         playerName: playerName,
         gender: playerGender,
         age: playerAge,
+        playerGender: playerGender,
+        playerAge: playerAge,
         attemptNo: String(attemptNo ?? ""),
 
         pretestScore: window.pretestScore ?? "",
@@ -1756,8 +1745,8 @@
         return;
       }
 
-      if (!age || !/^\d+$/.test(age)) {
-        alert("Usia hanya boleh angka.");
+      if (!age || !/^[0-9]+$/.test(age)) {
+        alert("Usia harus berupa angka.");
         return;
       }
 
