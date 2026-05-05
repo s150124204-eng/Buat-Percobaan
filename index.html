@@ -185,7 +185,13 @@
       margin-top: 4px;
     }
 
-    .form-input {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-input, .form-select {
       width: 100%;
       height: 54px;
       border: 1px solid rgba(255, 255, 255, .14);
@@ -196,6 +202,17 @@
       font-size: 1rem;
       outline: none;
       box-shadow: inset 0 2px 12px rgba(0, 0, 0, .08);
+    }
+
+    .form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #16213a 50%), linear-gradient(135deg, #16213a 50%, transparent 50%);
+      background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 34px;
     }
 
     .btn {
@@ -904,7 +921,12 @@
         gap: 10px;
       }
 
-      .form-input {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .form-input, .form-select {
         height: 48px;
         font-size: .94rem;
       }
@@ -1305,6 +1327,14 @@
 
         <div class="form-stack">
           <input id="playerName" class="form-input" type="text" placeholder="Enter your name" />
+          <div class="form-row">
+            <select id="playerGender" class="form-select">
+              <option value="">Pilih jenis kelamin</option>
+              <option value="Laki-laki">Laki-laki</option>
+              <option value="Perempuan">Perempuan</option>
+            </select>
+            <input id="playerAge" class="form-input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Usia" />
+          </div>
           <input id="playerEmail" class="form-input" type="email" placeholder="Enter your email" />
           <button id="playBtn" class="btn" onclick="startGame()" disabled>PLAY</button>
         </div>
@@ -1446,7 +1476,7 @@
   </div>
 
   <script>
-    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyw0p4EcHagw453t8AxvJmi5NtcXTTuBV5pNQp2lmqRGrmcnlU5qi1eBTkbH5sAnK6lgg/exec";
+    const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzL_D61lEdIq0lTianjUiaMjaUEv-aJbHYtk7zSwkhjJKid7xSbIxpszbqIZOtd6YPyfA/exec";
 
     const levelConfig = [
       {
@@ -1551,13 +1581,25 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    function sanitizeAgeInput() {
+      const ageInput = document.getElementById("playerAge");
+      ageInput.value = ageInput.value.replace(/\D/g, "");
+    }
+
     function updatePlayState() {
       const name = document.getElementById("playerName").value.trim();
+      const gender = document.getElementById("playerGender").value.trim();
+      const age = document.getElementById("playerAge").value.trim();
       const email = document.getElementById("playerEmail").value.trim();
-      document.getElementById("playBtn").disabled = !(name && email);
+      document.getElementById("playBtn").disabled = !(name && gender && age && email);
     }
 
     document.getElementById("playerName").addEventListener("input", updatePlayState);
+    document.getElementById("playerGender").addEventListener("change", updatePlayState);
+    document.getElementById("playerAge").addEventListener("input", () => {
+      sanitizeAgeInput();
+      updatePlayState();
+    });
     document.getElementById("playerEmail").addEventListener("input", updatePlayState);
 
     function formatMs(ms) {
@@ -1638,6 +1680,8 @@
 
     async function sendToSheet(summary, attemptNo) {
       const playerName = document.getElementById("playerName").value.trim();
+      const playerGender = document.getElementById("playerGender").value.trim();
+      const playerAge = document.getElementById("playerAge").value.trim();
       const playerEmail = document.getElementById("playerEmail").value.trim();
 
       const l1 = summary.levelDetails?.[0] || {};
@@ -1651,6 +1695,8 @@
 
         email: playerEmail,
         playerName: playerName,
+        gender: playerGender,
+        age: playerAge,
         attemptNo: String(attemptNo ?? ""),
 
         pretestScore: window.pretestScore ?? "",
@@ -1696,10 +1742,22 @@
 
     function startGame() {
       const name = document.getElementById("playerName").value.trim();
+      const gender = document.getElementById("playerGender").value.trim();
+      const age = document.getElementById("playerAge").value.trim();
       const email = document.getElementById("playerEmail").value.trim();
 
       if (!name) {
         alert("Nama belum diisi.");
+        return;
+      }
+
+      if (!gender) {
+        alert("Jenis kelamin belum dipilih.");
+        return;
+      }
+
+      if (!age || !/^\d+$/.test(age)) {
+        alert("Usia hanya boleh angka.");
         return;
       }
 
